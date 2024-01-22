@@ -70,6 +70,7 @@ rl.question(
                 ] + " ";
             }
             seedPhrase = seedPhrase.trim();
+            console.log("Your seed phrase is(Kindly keep it safe):" +seedPhrase)
 
             let passPhrase = passPhraseInput || "";
             const SEED = generateSeedFromMnemonic(seedPhrase, passPhrase);
