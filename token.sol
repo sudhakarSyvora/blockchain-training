@@ -1,29 +1,26 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.0;
+import "./IERC20.sol";
 
-contract tokenContract {
+contract ERC20Token is IERC20 {
     mapping(address => uint256) private _balances;
 
     mapping(address => mapping(address => uint256)) private _allowed;
 
     uint256 private _totalSupply;
 
-    event Transfer(address indexed _from, address indexed _to, uint256 _value);
+    string public name;                   
+    uint8 public decimals;               
+    string public symbol;
 
-    event Approval(
-        address indexed _owner,
-        address indexed _spender,
-        uint256 _value
-    );
-
-    constructor(uint256 totalSupplyValue) {
+    constructor(uint256 totalSupplyValue, string memory nameValue, uint8 decimalsValue, string memory symbolValue) {
         _totalSupply = totalSupplyValue;
         _balances[msg.sender] = totalSupplyValue;
+        name = nameValue;
+        decimals = decimalsValue;
+        symbol = symbolValue;
     }
 
-    function name() public pure returns (string memory) {
-        return "lafucaDecosta";
-    }
 
     function totalSupply() public view returns (uint256) {
         return _totalSupply;
