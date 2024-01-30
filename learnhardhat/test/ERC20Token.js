@@ -10,14 +10,14 @@ describe("Token Contract", function () {
   beforeEach(async function () {
     Token = await ethers.getContractFactory("ERC20Token");
     [owner, addr1, addr2, ...addrs] = await ethers.getSigners();
-    hardhatToken = await Token.deploy(10000, "Lafuca", 5, "leth");
+    hardhatToken = await Token.deploy(1000, "Coins", 5, "leth");
   });
   describe("Deployment", () => {
     it("Should have correct totalSupply", async () => {
-      expect(await hardhatToken.totalSupply()).to.equal(10000);
+      expect(await hardhatToken.totalSupply()).to.equal(1000);
     });
     it("Should have correct name", async () => {
-      expect(await hardhatToken.name()).to.equal("Lafuca");
+      expect(await hardhatToken.name()).to.equal("Coins");
     });
     it("Should have correct decimal places", async () => {
       expect(await hardhatToken.decimals()).to.equal(5);
