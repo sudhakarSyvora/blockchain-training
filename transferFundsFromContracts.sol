@@ -5,7 +5,7 @@ contract ContractA {
     address public contractB;
     address public contractD;
 
-    constructor(address _contractB, address _contractD) { 
+    constructor(address _contractB, address _contractD) {
         contractB = _contractB;
         contractD = _contractD;
     }
@@ -21,13 +21,6 @@ contract ContractA {
         (bool success, ) = contractD.call{value: msg.value}("");
         require(success, "Failed to send ETH to ContractD");
     }
-     function getContractABalance() external view returns (uint256) {
-        return address(this).balance;
-    }
-     function recieveFunds() public payable {
- 
-    }
-
 }
 
 contract ContractB {
@@ -45,18 +38,11 @@ contract ContractB {
 }
 
 contract ContractC {
-    receive() external payable {
-      
-    }
+    receive() external payable {}
 }
-
 
 contract ContractD {
-    function rejectTransaction() external pure {
+    receive() external payable {
         revert("Transaction rejected by ContractD");
     }
-      function getContractDBalance() external view returns (uint256) {
-        return address(this).balance;
-    }
 }
-
