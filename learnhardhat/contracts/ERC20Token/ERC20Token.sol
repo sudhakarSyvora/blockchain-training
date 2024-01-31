@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity ^0.8.19;
-import "./IERC20.sol";
+import "./interfaces/IERC20.sol";
 
 contract ERC20Token is IERC20 {
     mapping(address => uint256) private _balances;
@@ -13,6 +13,7 @@ contract ERC20Token is IERC20 {
     uint8 public decimals;
     string public symbol;
     address private _contractOwner;
+    address private _ERC721ContractAddress;
 
     constructor(
         uint256 totalSupplyValue,
@@ -26,6 +27,11 @@ contract ERC20Token is IERC20 {
         decimals = decimalsValue;
         symbol = symbolValue;
         _contractOwner = msg.sender;
+    }
+
+    function setERC721ContractAddress(address _erc721ContractAddress) external {
+        require(_contractOwner == msg.sender);
+        _ERC721ContractAddress = _erc721ContractAddress;
     }
 
     function totalSupply() external view returns (uint256) {
@@ -87,10 +93,19 @@ contract ERC20Token is IERC20 {
         return _allowed[_owner][_spender];
     }
 
-    function mint(address _to,uint256 _value) external  returns (bool success) {
+    function mint(address _to, uint256 _value) external returns (bool success) {
         require(msg.sender == _contractOwner, "Owner can only mint new tokens");
         _totalSupply = _totalSupply + _value;
         _balances[_to] = _balances[_to] + _value;
         return true;
+    }
+
+    function transferForNFT(address _tokenOwner,address _buyer, uint _value) external {
+        require(
+            msg.sender == _ERC721ContractAddress,
+            "Not called by authorised contract!"
+        );
+        _balances[_tokenOwner] += _value;
+        _balances[_buyer] -= _value;
     }
 }
