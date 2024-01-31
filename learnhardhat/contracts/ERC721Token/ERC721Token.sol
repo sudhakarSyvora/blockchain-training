@@ -31,7 +31,11 @@ contract ERC721 is IERC721 {
     mapping(address => mapping(address => bool)) public isApprovedForAll;
 
     //Mapping from tokenid to prices
-    mapping(uint => uint) internal _price;
+    mapping(uint => uint) public _price;
+
+    //Mapping to check wether price has been set or not
+
+    mapping(uint=>bool)  internal _isPriceSet; 
 
     function supportsInterface(
         bytes4 interfaceId
@@ -173,15 +177,17 @@ contract MyNFT is ERC721 {
         _mint(to, id);
     }
 
-    function setPrice(uint id, uint value) external {
-        require(_ownerOf[id] == msg.sender);
-        _price[id] = value;
+      function setPrice(uint256 id, uint256 value) external {
+        require(_ownerOf[id] == msg.sender, "Only the owner can set the price");
+        _price[id] =  value;
+        _isPriceSet[id]=true;
     }
 
     function exchange(uint id) external {
         address tokenOwner = _ownerOf[id];
         address buyer = msg.sender;
         require(tokenOwner != address(0));
+        require(_isPriceSet[id], "Price for the NFT is not set");
         uint buyerBalance = erc20Token.balanceOf(buyer);
         require(buyerBalance >= _price[id]);
         //Transfer tokens from owner's balance
