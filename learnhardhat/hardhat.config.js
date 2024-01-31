@@ -5,7 +5,7 @@ require('hardhat-deploy');
  
 const { ALCHEMY_API_KEY, SEPOLIA_PVT_KEY } = process.env;
 module.exports = {
-  solidity: "0.8.19",
+  solidity: "0.8.20",
   defaultNetwork: "sepolia",
   networks: {
     sepolia: {

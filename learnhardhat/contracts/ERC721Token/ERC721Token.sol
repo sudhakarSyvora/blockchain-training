@@ -1,22 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "./interfaces/IERC721.sol";
-import "./interfaces/IERC721Receiver.sol";
+ 
 import "../ERC20Token/ERC20Token.sol";
 
-contract ERC721 is IERC721 {
-    event Transfer(address indexed from, address indexed to, uint indexed id);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint indexed id
-    );
-    event ApprovalForAll(
-        address indexed owner,
-        address indexed operator,
-        bool approved
-    );
+ 
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+ 
+
+// Your ERC20Token contract
+ contract ERC721 is IERC721 {
 
     // Mapping from token ID to owner address
     mapping(uint => address) internal _ownerOf;
@@ -63,7 +57,7 @@ contract ERC721 is IERC721 {
     function approve(address spender, uint id) external {
         address owner = _ownerOf[id];
         require(
-            msg.sender == owner || isApprovedForAll[owner][msg.sender],
+            msg.sender == owner,
             "not authorized"
         );
 
