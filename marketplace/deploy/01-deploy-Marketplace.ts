@@ -22,7 +22,7 @@ const deployContracts: DeployFunction = async (
     await deploy("NFTMarketplace", {
         from: deployer,
         log: true,
-        args: [gameItemsResult.address], 
+        args: [55], 
         waitConfirmations: chainId == 31337 ? 1 : 3,
     });
 };
