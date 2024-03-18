@@ -10,8 +10,8 @@ async function main() {
 
   // console.log("Deploying contracts with the account:", deployer.address);
 
-  const ERC20Token = await ethers.getContractFactory("ERC20Token");
-  const contract=await ERC20Token.deploy(1000, "Coins", 5, "leth");
+  const ERC20Token = await ethers.getContractFactory("MyToken");
+  const contract=await ERC20Token.deploy("nft","leth");
 
   console.log("Contract deployed at "+contract.target);
 }
