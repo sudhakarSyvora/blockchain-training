@@ -75,7 +75,7 @@ contract NFTMarketplace {
         } else {
             require(msg.value == 0, "ETH not allowed for this sale");
             IERC20 paymentToken = IERC20(sale.paymentToken);
-            require(paymentToken.transferFrom(msg.sender, address(this), totalPrice), "Payment transfer failed");
+            require(paymentToken.transferFrom(msg.sender, sale.owner, totalPrice), "Payment transfer failed");
         }
 
         uint256 feeAmount = totalPrice * feePercentage / 10000;
