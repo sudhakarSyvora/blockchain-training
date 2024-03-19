@@ -7,7 +7,6 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "hardhat/console.sol";
 
-import "hardhat/console.sol";
 
 /// @title NFT Marketplace Contract
 /// @notice This contract allows users to buy and sell NFTs (ERC721 and ERC1155 tokens) on a decentralized marketplace.
