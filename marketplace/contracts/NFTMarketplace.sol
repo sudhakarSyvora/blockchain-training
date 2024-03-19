@@ -5,6 +5,8 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@openzeppelin/contracts/token/ERC1155/IERC1155.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
+import "hardhat/console.sol";
+
 contract NFTMarketplace {
     struct Sale {
         address owner;
@@ -103,7 +105,7 @@ contract NFTMarketplace {
         uint256 totalPrice = sale.price;
         uint256 feeAmount = (totalPrice * feePercentage) / 10000;
         if (sale.paymentToken == address(0)) {
-            require(msg.value <= totalPrice, "Insufficient ETH sent");
+            require(msg.value >= totalPrice, "Insufficient ETH sent");
             payable(sale.owner).transfer(totalPrice - feeAmount);
         } else {
             IERC20 paymentToken = IERC20(sale.paymentToken);
