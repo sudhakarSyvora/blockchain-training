@@ -7,6 +7,10 @@ import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 import "hardhat/console.sol";
 
+import "hardhat/console.sol";
+
+/// @title NFT Marketplace Contract
+/// @notice This contract allows users to buy and sell NFTs (ERC721 and ERC1155 tokens) on a decentralized marketplace.
 contract NFTMarketplace {
     struct Sale {
         address owner;
@@ -17,53 +21,60 @@ contract NFTMarketplace {
         address paymentToken;
     }
 
+    // Mapping to store sale details for each NFT contract and token ID
     mapping(address => mapping(uint256 => Sale)) public sales;
+    
+    // Address of the marketplace owner who receives fees
     address public marketplaceOwner;
+    
+    // Percentage of fees charged by the marketplace
     uint256 public feePercentage;
 
+    // Events to track sale creation, updates, and completions
     event SaleCreated(
-        address indexed owner,
-        address indexed nftContract,
-        uint256 indexed tokenId,
+        address owner,
+        address nftContract,
+        uint256 tokenId,
         uint256 quantity,
         uint256 price,
         address paymentToken
     );
     event SaleUpdated(
-        address indexed owner,
-        uint256 indexed tokenId,
+        address owner,
+        uint256 tokenId,
         uint256 price
     );
     event SaleCompleted(
-        address indexed buyer,
-        uint256 indexed tokenId,
+        address buyer,
+        uint256 tokenId,
         uint256 price
     );
 
+    /// @notice Constructor function to initialize the marketplace owner and fee percentage
+    /// @param _feePercentage The percentage of fees charged by the marketplace
     constructor(uint256 _feePercentage) {
         marketplaceOwner = msg.sender;
         feePercentage = _feePercentage;
     }
 
+    /// @notice Modifier to restrict access to only the owner of the NFT
     modifier onlyNFTOwner(address _nftContract, uint256 _tokenId) {
         address tokenOwner;
         if (IERC721(_nftContract).supportsInterface(0x80ac58cd)) {
             tokenOwner = IERC721(_nftContract).ownerOf(_tokenId);
         } else {
-            tokenOwner = IERC1155(_nftContract).balanceOf(
-                msg.sender,
-                _tokenId
-            ) > 0
-                ? msg.sender
-                : address(0);
+            tokenOwner = IERC1155(_nftContract).balanceOf(msg.sender, _tokenId) > 0 ? msg.sender : address(0);
         }
-        require(
-            tokenOwner == msg.sender,
-            "Only NFT owner can perform this action"
-        );
+        require(tokenOwner == msg.sender, "Only NFT owner can perform this action");
         _;
     }
 
+    /// @notice Function to create or update a sale for an NFT
+    /// @param _nftContract Address of the NFT contract
+    /// @param _tokenId ID of the token
+    /// @param _quantity Quantity of tokens being sold (for ERC1155)
+    /// @param _price Sale price of the NFT
+    /// @param _paymentToken Address of the ERC20 token used for payment
     function createOrUpdateSale(
         address _nftContract,
         uint256 _tokenId,
@@ -84,20 +95,16 @@ contract NFTMarketplace {
                 _price,
                 _paymentToken
             );
-            emit SaleCreated(
-                msg.sender,
-                _nftContract,
-                _tokenId,
-                _quantity,
-                _price,
-                _paymentToken
-            );
+            emit SaleCreated(msg.sender, _nftContract, _tokenId, _quantity, _price, _paymentToken);
         } else {
             sales[_nftContract][_tokenId].price = _price;
             emit SaleUpdated(msg.sender, _tokenId, _price);
         }
     }
 
+    /// @notice Function to buy an NFT from the marketplace
+    /// @param _nftContract Address of the NFT contract
+    /// @param _tokenId ID of the token
     function buy(address _nftContract, uint256 _tokenId) external payable {
         Sale storage sale = sales[_nftContract][_tokenId];
         require(sale.owner != address(0), "Sale does not exist");
@@ -109,14 +116,8 @@ contract NFTMarketplace {
             payable(sale.owner).transfer(totalPrice - feeAmount);
         } else {
             IERC20 paymentToken = IERC20(sale.paymentToken);
-            require(
-                paymentToken.allowance(msg.sender, address(this)) >= totalPrice,
-                "Allowance not provided"
-            );
-            require(
-                paymentToken.transferFrom(msg.sender, sale.owner, totalPrice),
-                "Payment transfer failed"
-            );
+            require(paymentToken.allowance(msg.sender, address(this)) >= totalPrice, "Allowance not provided");
+            require(paymentToken.transferFrom(msg.sender, sale.owner, totalPrice), "Payment transfer failed");
         }
 
         payable(marketplaceOwner).transfer(feeAmount);
@@ -125,24 +126,10 @@ contract NFTMarketplace {
         if (excessPayment > 0) {
             payable(msg.sender).transfer(excessPayment);
         }
-        if (
-            IERC721(sale.nftContract).supportsInterface(
-                type(IERC721).interfaceId
-            )
-        ) {
-            IERC721(sale.nftContract).safeTransferFrom(
-                sale.owner,
-                msg.sender,
-                _tokenId
-            );
+        if (IERC721(sale.nftContract).supportsInterface(type(IERC721).interfaceId)) {
+            IERC721(sale.nftContract).safeTransferFrom(sale.owner, msg.sender, _tokenId);
         } else {
-            IERC1155(sale.nftContract).safeTransferFrom(
-                sale.owner,
-                msg.sender,
-                _tokenId,
-                sale.quantity,
-                ""
-            );
+            IERC1155(sale.nftContract).safeTransferFrom(sale.owner, msg.sender, _tokenId, sale.quantity, "");
         }
         sales[_nftContract][_tokenId].owner = msg.sender;
 
