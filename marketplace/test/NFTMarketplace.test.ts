@@ -37,130 +37,127 @@ describe("NFTMarketplace", function () {
       .setApprovalForAll(nftMarketplace.target, true);
   });
 
-  // describe("createOrUpdateSale", function () {
-  //   const ContractType = {
-  //     ERC721: 0,
-  //     ERC1155: 1,
-  //   };
+  describe("createOrUpdateSale", function () {
+    const ContractType = {
+      ERC721: 0,
+      ERC1155: 1,
+    };
 
-  //   it("should create a sale for ERC721 token", async function () {
-  //     const tokenId = 1;
-  //     const price = ethers.parseEther("1");
-  //     await expect(
-  //       nftMarketplace.createOrUpdateSale(
-  //         erc721Token.target,
-  //         tokenId,
-  //         1,
-  //         price,
-  //         zeroAddress
-  //       )
-  //     )
-  //       .to.emit(nftMarketplace, "SaleCreated")
-  //       .withArgs(
-  //         owner.address,
-  //         erc721Token.target,
-  //         zeroAddress,
-  //         tokenId,
-  //         1,
-  //         price,
-  //         ContractType.ERC721
-  //       );
-  //   });
+    it("should create a sale for ERC721 token", async function () {
+      const tokenId = 1;
+      const price = ethers.parseEther("1");
+      await expect(
+        nftMarketplace.createOrUpdateSale(
+          erc721Token.target,
+          tokenId,
+          1,
+          price,
+          zeroAddress
+        )
+      )
+        .to.emit(nftMarketplace, "SaleCreated")
+        .withArgs(
+          owner.address,
+          erc721Token.target,
+          zeroAddress,
+          tokenId,
+          1,
+          price,
+          ContractType.ERC721
+        );
+    });
 
-  //   it("should create a sale for ERC1155 token", async function () {
-  //     const tokenId = 1;
-  //     const quantity = 5;
-  //     const price = ethers.parseEther("1");
+    it("should create a sale for ERC1155 token", async function () {
+      const tokenId = 1;
+      const quantity = 5;
+      const price = ethers.parseEther("1");
 
-  //     await expect(
-  //       nftMarketplace.createOrUpdateSale(
-  //         erc1155Token.target,
-  //         tokenId,
-  //         quantity,
-  //         price,
-  //         zeroAddress
-  //       )
-  //     )
-  //       .to.emit(nftMarketplace, "SaleCreated")
-  //       .withArgs(
-  //         owner.address,
-  //         erc1155Token.target,
-  //         zeroAddress,
-  //         tokenId,
-  //         quantity,
-  //         price,
-  //         ContractType.ERC1155
-  //       );
-  //   });
-  // });
+      await expect(
+        nftMarketplace.createOrUpdateSale(
+          erc1155Token.target,
+          tokenId,
+          quantity,
+          price,
+          zeroAddress
+        )
+      )
+        .to.emit(nftMarketplace, "SaleCreated")
+        .withArgs(
+          owner.address,
+          erc1155Token.target,
+          zeroAddress,
+          tokenId,
+          quantity,
+          price,
+          ContractType.ERC1155
+        );
+    });
+  });
 
-  // describe("buy", function () {
-  //   it("should allow a user to buy an ERC721 token", async function () {
-  //     const tokenId = 1;
-  //     const price = ethers.parseEther("1");
+  describe("buy", function () {
+    it("should allow a user to buy an ERC721 token", async function () {
+      const tokenId = 1;
+      const price = ethers.parseEther("1");
 
-  //     await nftMarketplace.createOrUpdateSale(
-  //       erc721Token.target,
-  //       tokenId,
-  //       1,
-  //       price,
-  //       zeroAddress
-  //     );
+      await nftMarketplace.createOrUpdateSale(
+        erc721Token.target,
+        tokenId,
+        1,
+        price,
+        zeroAddress
+      );
 
-  //     await expect(
-  //       nftMarketplace
-  //         .connect(addr1)
-  //         .buy(erc721Token.target, tokenId, { value: price })
-  //     )
-  //       .to.emit(nftMarketplace, "SaleCompleted")
-  //       .withArgs(addr1.address, tokenId, price);
+      await expect(
+        nftMarketplace
+          .connect(addr1)
+          .buy(erc721Token.target, tokenId, { value: price })
+      )
+        .to.emit(nftMarketplace, "SaleCompleted")
+        .withArgs(addr1.address, tokenId, price);
 
-  //     const newOwner = await erc721Token.ownerOf(tokenId);
-  //     expect(newOwner).to.equal(addr1.address);
-  //   });
+      const newOwner = await erc721Token.ownerOf(tokenId);
+      expect(newOwner).to.equal(addr1.address);
+    });
 
-  //   it("should allow a user to buy an ERC1155 token", async function () {
-  //     const tokenId = 1;
-  //     const quantity = 5;
-  //     const price = ethers.parseEther("1");
+    it("should allow a user to buy an ERC1155 token", async function () {
+      const tokenId = 1;
+      const quantity = 5;
+      const price = ethers.parseEther("1");
 
-  //     await nftMarketplace.createOrUpdateSale(
-  //       erc1155Token.target,
-  //       tokenId,
-  //       quantity,
-  //       price,
-  //       zeroAddress
-  //     );
+      await nftMarketplace.createOrUpdateSale(
+        erc1155Token.target,
+        tokenId,
+        quantity,
+        price,
+        zeroAddress
+      );
 
-  //     await expect(
-  //       nftMarketplace
-  //         .connect(addr1)
-  //         .buy(erc1155Token.target, tokenId, { value: price })
-  //     )
-  //       .to.emit(nftMarketplace, "SaleCompleted")
-  //       .withArgs(addr1.address, tokenId, price);
+      await expect(
+        nftMarketplace
+          .connect(addr1)
+          .buy(erc1155Token.target, tokenId, { value: price })
+      )
+        .to.emit(nftMarketplace, "SaleCompleted")
+        .withArgs(addr1.address, tokenId, price);
 
-  //     const newOwnerBalance = await erc1155Token.balanceOf(
-  //       addr1.address,
-  //       tokenId
-  //     );
-  //     expect(newOwnerBalance).to.equal(quantity);
-  //   });
-  // });
+      const newOwnerBalance = await erc1155Token.balanceOf(
+        addr1.address,
+        tokenId
+      );
+      expect(newOwnerBalance).to.equal(quantity);
+    });
+  });
   describe("buy with ERC20 token", function () {
     it("should buy an ERC721 token using ERC20", async function () {
       const tokenId = 1;
       const price = ethers.parseEther("1");
-      const feePercentage = 55;
-      const paymentTokenAmount = ethers.parseEther("1.55"); // Including fee
-      console.log("🚀 ~ paymentToken:", paymentToken)
-
-      // Approve NFTMarketplace contract to spend payment tokens
+      const paymentTokenAmount = ethers.parseEther("1");  
+    
       await paymentToken
-        .connect(owner)
-        .approve(nftMarketplace.address, paymentTokenAmount);
+        .connect(addr1)
+        .approve(nftMarketplace.target, paymentTokenAmount);
 
-      // Create a sale for the ERC721 token
+
       await nftMarketplace.createOrUpdateSale(
         erc721Token.target,
         tokenId,
@@ -169,16 +166,14 @@ describe("NFTMarketplace", function () {
         paymentToken.target
       );
 
-      // Perform the buy transaction
       await expect(
         nftMarketplace
           .connect(addr1)
-          .buy(erc721Token.address, tokenId, { value: 0 })
+          .buy(erc721Token.target, tokenId, { value: 0 })
       )
         .to.emit(nftMarketplace, "SaleCompleted")
         .withArgs(addr1.address, tokenId, price);
 
-      // Check if the ERC721 token was transferred to the buyer
       const ownerOfToken = await erc721Token.ownerOf(tokenId);
       expect(ownerOfToken).to.equal(addr1.address);
     });
